@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Jy5-Ha-mht">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="ufC-wZ-h7g">
+            <objects>
+                <viewController id="vXZ-lx-hvc" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
+                        <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I0T-C7-a2Y" customClass="CHXBannerView">
+                                <rect key="frame" x="16" y="140" width="568" height="200"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="a8c-Jb-IYD"/>
+                                    <constraint firstAttribute="height" constant="200" id="gn9-RT-JSd"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="gn9-RT-JSd"/>
+                                    </mask>
+                                </variation>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="I0T-C7-a2Y" secondAttribute="trailing" id="a7o-7J-pUr"/>
+                            <constraint firstItem="I0T-C7-a2Y" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="lYy-Bl-buM"/>
+                            <constraint firstItem="I0T-C7-a2Y" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="120" id="qHK-Nn-PHb"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="tNf-NO-zLN"/>
+                    <connections>
+                        <outlet property="bannerView" destination="I0T-C7-a2Y" id="UR5-9m-Mgr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1289" y="-8"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="0lm-Si-tGp">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Jy5-Ha-mht" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="adK-v1-uiZ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="XYC-F9-kS5" kind="relationship" relationship="rootViewController" id="Urj-ce-DCx"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Mny-q3-bmD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="380" y="868"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="pUv-Uy-0Lw">
+            <objects>
+                <viewController id="XYC-F9-kS5" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="XVB-cI-YWz"/>
+                        <viewControllerLayoutGuide type="bottom" id="a7g-Es-C1r"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="tDe-uT-kcd">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="63N-lY-Kxz" appends="YES" id="OIf-kg-VEn"/>
+                        </connections>
+                    </view>
+                    <navigationItem key="navigationItem" id="54N-vV-CbE"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KVF-jF-HJJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="63N-lY-Kxz">
+                    <connections>
+                        <segue destination="vXZ-lx-hvc" kind="show" id="2SR-pG-og8"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="1006" y="809"/>
+        </scene>
+    </scenes>
+</document>
