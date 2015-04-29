@@ -2,7 +2,7 @@
 //  CHXBannerView.m
 //  CHXBannerView
 //
-//  Created by Moch Xiao on 2015-02-16.
+//  Created by Moch Xiao on 2015-03-01.
 //  Copyright (c) 2014 Moch Xiao (https://github.com/atcuan).
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
