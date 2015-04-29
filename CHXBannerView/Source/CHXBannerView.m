@@ -98,15 +98,19 @@
     [self.timer pause];
     
     [self pr_updateControlsFrame];
-
+    
     if (self.animationDelayDuration) {
         [self.timer resumeAfterDuration:self.animationDelayDuration()];
     }
 }
 
 - (void)willMoveToWindow:(UIWindow *)newWindow {
-    if (!newWindow) {
-        [self.timer invalidate];
+    [self.timer invalidate];
+    
+    if (newWindow && self.animationDelayDuration) {
+        [self pr_updateControlsFrame];
+        self.timer = nil;
+        [self.timer resumeAfterDuration:self.animationDelayDuration()];
     }
 }
 
@@ -116,7 +120,7 @@
     // set contentOffset will trigger delegate method, which will call some unimplements block yet.
     _baseScrollView.delegate = nil;
     _baseScrollView.frame = self.bounds;
-    _baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, 0);
+    _baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, CGRectGetHeight(self.bounds));
     _baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.bounds), 0);
     for (int i = 0; i < 3; i++) {
         UIImageView *imageView = (UIImageView *)_imageViewList[i];
@@ -131,7 +135,7 @@
 - (void)pr_initializeControls {
     _baseScrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
     _baseScrollView.translatesAutoresizingMaskIntoConstraints = NO;
-    _baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, 0);
+    _baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, CGRectGetHeight(self.bounds));
     _baseScrollView.pagingEnabled = YES;
     _baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.bounds), 0);
     _baseScrollView.showsVerticalScrollIndicator = NO;
@@ -157,7 +161,7 @@
         imageView.contentMode = UIViewContentModeScaleAspectFill;
         imageView.layer.masksToBounds = YES;
         imageView.tag = i;
-
+        
         [_baseScrollView addSubview:imageView];
         [_imageViewList addObject:imageView];
     }
@@ -171,8 +175,14 @@
 
 - (NSInteger)pr_realIndexWithIndex:(NSInteger)index {
     NSParameterAssert(_numberOfPages);
+    
+    NSInteger indexAmount = self.numberOfPages();
+    // 更新页码总数
+    _pageControl.numberOfPages = indexAmount;
+    // 更新是否允许用户交互
+    _baseScrollView.scrollEnabled = indexAmount > 1;
     // 获取最大索引
-    NSInteger maximumIndex = self.numberOfPages() - 1;
+    NSInteger maximumIndex = indexAmount - 1;
     // 判断真实索引位置
     if (index > maximumIndex) {
         index = 0;
@@ -184,7 +194,7 @@
 
 - (void)pr_updateUserInterfaceWithScrollViewContentOffset:(CGPoint)contentOffset {
     BOOL shouldUpdate = NO;
-
+    
     if (contentOffset.x >= CGRectGetWidth(_baseScrollView.bounds) * 2) {
         // 向右
         shouldUpdate = YES;
@@ -199,7 +209,7 @@
     if (!shouldUpdate) {
         return;
     }
-
+    
     _pageControl.currentPage = _currentIndex;
     
     [self pr_updateUserInterface];
@@ -211,7 +221,7 @@
     self.updateImageViewForIndex((UIImageView *)_imageViewList[0], [self pr_realIndexWithIndex:_currentIndex - 1]);
     self.updateImageViewForIndex((UIImageView *)_imageViewList[1], [self pr_realIndexWithIndex:_currentIndex]);
     self.updateImageViewForIndex((UIImageView *)_imageViewList[2], [self pr_realIndexWithIndex:_currentIndex + 1]);
-
+    
     // 恢复可见区域
     _baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(_baseScrollView.bounds), 0);
 }
@@ -258,12 +268,31 @@
 
 - (void)setAnimationDelayDuration:(NSTimeInterval (^)(void))animationDelayDuration {
     _animationDelayDuration = animationDelayDuration;
-    _timer = [NSTimer scheduledTimerWithTimeInterval:_animationDelayDuration()
-                                              target:self
-                                            selector:@selector(pr_handleSwitchImageView:)
-                                            userInfo:nil
-                                             repeats:YES];
-    [_timer resume];
+    [self.timer invalidate];
+    self.timer = nil;
+    [self.timer resume];
+}
+
+- (void)setBackgroundImage:(UIImage *)backgroundImage {
+    self.layer.contents = (id)backgroundImage.CGImage;
+}
+
+- (UIImage *)backgroundImage {
+    return [UIImage imageWithCGImage:(__bridge CGImageRef)((id)self.layer.contents)];
+}
+
+#pragma mark - Accessor
+
+- (NSTimer *)timer {
+    if (!_timer) {
+        _timer = [NSTimer scheduledTimerWithTimeInterval:_animationDelayDuration()
+                                                  target:self
+                                                selector:@selector(pr_handleSwitchImageView:)
+                                                userInfo:nil
+                                                 repeats:YES];
+        [_timer pause];
+    }
+    return _timer;
 }
 
 
