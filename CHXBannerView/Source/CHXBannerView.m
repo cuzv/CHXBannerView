@@ -184,7 +184,6 @@
     // 获取最大索引
     NSInteger maximumIndex = indexAmount - 1;
     maximumIndex = maximumIndex > 0 ? maximumIndex : 0;
-    NSLog(@"maximumIndex = %d", maximumIndex);
     // 判断真实索引位置
     if (index > maximumIndex) {
         index = 0;
