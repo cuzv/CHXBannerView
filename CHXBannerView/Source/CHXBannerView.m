@@ -183,12 +183,15 @@
     _baseScrollView.scrollEnabled = indexAmount > 1;
     // 获取最大索引
     NSInteger maximumIndex = indexAmount - 1;
+    maximumIndex = maximumIndex > 0 ? maximumIndex : 0;
+    NSLog(@"maximumIndex = %d", maximumIndex);
     // 判断真实索引位置
     if (index > maximumIndex) {
         index = 0;
     } else if (index < 0) {
         index = maximumIndex;
     }
+    
     return index;
 }
 
@@ -227,6 +230,10 @@
 }
 
 - (void)pr_handleSwitchImageView:(NSTimer *)sender {
+    if (self.numberOfPages() <= 1) {
+        return;
+    }
+    
     CGPoint newOffset = CGPointMake(self.baseScrollView.contentOffset.x + CGRectGetWidth(self.baseScrollView.bounds), 0);
     [self.baseScrollView setContentOffset:newOffset animated:YES];
 }
@@ -257,7 +264,9 @@
 
 - (void)setNumberOfPages:(NSInteger (^)(void))numberOfPages {
     _numberOfPages = numberOfPages;
-    _pageControl.numberOfPages = _numberOfPages();
+    NSInteger count = numberOfPages();
+    count = count > 0 ?: 0;
+    _pageControl.numberOfPages = count;
     _baseScrollView.scrollEnabled = _pageControl.numberOfPages > 1;
 }
 

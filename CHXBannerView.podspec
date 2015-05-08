@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "CHXBannerView"
-  s.version      = "0.1.1"
+  s.version      = "0.2"
   s.summary      = "CHXBannerView is a immensity scrollview banner view, which is supported for Autolayout and framed"
 
   s.description  = <<-DESC
@@ -12,10 +12,9 @@ those word is all blah
   s.homepage     = "https://github.com/showmecode/CHXBannerView"
   s.license      = "MIT"
   s.author             = { "Moch" => "atcuan@gmail.com" }
-  s.social_media_url   = "https://twitter.com/MochXiao"
   s.platform     = :ios, "7.0"
   s.source       = { :git => "https://github.com/showmecode/CHXBannerView.git",
-:tag => "0.1.1" }
+:tag => s.version.to_s }
   s.requires_arc = true
   s.source_files  = "CHXBannerView/Source/*"
   s.frameworks = 'Foundation', 'UIKit'
