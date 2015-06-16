@@ -130,6 +130,8 @@
                                      CGRectGetHeight(_baseScrollView.bounds));
     }
     _baseScrollView.delegate = self;
+    _pageControl.bounds = CGRectMake(0, 0, CGRectGetWidth(self.bounds), 30);
+    _pageControl.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds) - CGRectGetMidY(_pageControl.bounds));
 }
 
 - (void)pr_initializeControls {
@@ -140,16 +142,15 @@
     _baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.bounds), 0);
     _baseScrollView.showsVerticalScrollIndicator = NO;
     _baseScrollView.showsHorizontalScrollIndicator = NO;
-    _baseScrollView.scrollsToTop = NO;
     _baseScrollView.delegate = self;
+    _baseScrollView.scrollsToTop = NO;
+    _baseScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:_baseScrollView];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(pr_handleTaped:)];
     [_baseScrollView addGestureRecognizer:tap];
     
     _pageControl = [UIPageControl new];
-    _pageControl.bounds = CGRectMake(0, 0, CGRectGetWidth(self.bounds), 30);
-    _pageControl.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds) - CGRectGetMidY(_pageControl.bounds));
     _pageControl.userInteractionEnabled = NO;
     [self addSubview:_pageControl];
     
@@ -231,7 +232,6 @@
 
 - (void)pr_handleSwitchImageView:(NSTimer *)sender {
     if (self.numberOfPages() <= 1) {
-        [self pr_updateUserInterface];
         return;
     }
     
