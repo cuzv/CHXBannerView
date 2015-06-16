@@ -39,4 +39,5 @@
 @property (nonatomic, copy) void (^didSelectItemAtIndex)(NSUInteger index);
 @property (nonatomic, copy) NSTimeInterval (^animationDelayDuration)(void);
 @property (nonatomic, strong) UIImage *backgroundImage;
+@property (nonatomic, strong, readonly) UIPageControl *pageControl;
 @end
