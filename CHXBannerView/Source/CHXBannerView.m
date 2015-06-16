@@ -140,6 +140,7 @@
     _baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.bounds), 0);
     _baseScrollView.showsVerticalScrollIndicator = NO;
     _baseScrollView.showsHorizontalScrollIndicator = NO;
+    _baseScrollView.scrollsToTop = NO;
     _baseScrollView.delegate = self;
     [self addSubview:_baseScrollView];
     
@@ -230,6 +231,7 @@
 
 - (void)pr_handleSwitchImageView:(NSTimer *)sender {
     if (self.numberOfPages() <= 1) {
+        [self pr_updateUserInterface];
         return;
     }
     
