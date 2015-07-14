@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Jy5-Ha-mht">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Jy5-Ha-mht">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -18,10 +18,10 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I0T-C7-a2Y" customClass="CHXBannerView">
-                                <rect key="frame" x="16" y="140" width="568" height="200"/>
+                                <rect key="frame" x="20" y="30" width="564" height="125"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="200" id="a8c-Jb-IYD"/>
+                                    <constraint firstAttribute="height" constant="125" id="a8c-Jb-IYD"/>
                                     <constraint firstAttribute="height" constant="200" id="gn9-RT-JSd"/>
                                 </constraints>
                                 <variation key="default">
@@ -34,8 +34,8 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="I0T-C7-a2Y" secondAttribute="trailing" id="a7o-7J-pUr"/>
-                            <constraint firstItem="I0T-C7-a2Y" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="lYy-Bl-buM"/>
-                            <constraint firstItem="I0T-C7-a2Y" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="120" id="qHK-Nn-PHb"/>
+                            <constraint firstItem="I0T-C7-a2Y" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="20" id="lYy-Bl-buM"/>
+                            <constraint firstItem="I0T-C7-a2Y" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="10" id="qHK-Nn-PHb"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="tNf-NO-zLN"/>

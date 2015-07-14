@@ -145,7 +145,6 @@
 
 - (NSInteger)pr_realIndexWithIndex:(NSInteger)index {
     NSUInteger numberOfPages = [self pr_numberOfPages];
-    NSParameterAssert(numberOfPages);
     
     // 更新页码总数
     _pageControl.numberOfPages = numberOfPages;
