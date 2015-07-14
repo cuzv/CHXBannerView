@@ -25,36 +25,7 @@
 //
 
 #import "CHXBannerView.h"
-
-#pragma mark - NSTimer
-
-@implementation NSTimer (CHXAddition)
-
-- (void)pause {
-    if (!self.isValid) {
-        return;
-    }
-    
-    [self setFireDate:[NSDate distantFuture]];
-}
-
-- (void)resume {
-    if (!self.isValid) {
-        return;
-    }
-    
-    [self setFireDate:[NSDate date]];
-}
-
-- (void)resumeAfterDuration:(NSTimeInterval)interval {
-    if (!self.isValid) {
-        return;
-    }
-    
-    [self setFireDate:[NSDate dateWithTimeIntervalSinceNow:interval]];
-}
-
-@end
+#import "NSTimer+CHXAddition.h"
 
 #pragma mark - CHXBannerView
 
@@ -99,18 +70,17 @@
     
     [self pr_updateControlsFrame];
     
-    if (self.animationDelayDuration) {
-        [self.timer resumeAfterDuration:self.animationDelayDuration()];
-    }
+    [self.timer resumeAfterDuration:[self pr_animationDuration]];
 }
 
 - (void)willMoveToWindow:(UIWindow *)newWindow {
     [self.timer invalidate];
     
-    if (newWindow && self.animationDelayDuration) {
+    NSTimeInterval delay = [self pr_animationDuration];
+    if (newWindow && delay) {
         [self pr_updateControlsFrame];
         self.timer = nil;
-        [self.timer resumeAfterDuration:self.animationDelayDuration()];
+        [self.timer resumeAfterDuration:delay];
     }
 }
 
@@ -118,73 +88,71 @@
 
 - (void)pr_updateControlsFrame {
     // set contentOffset will trigger delegate method, which will call some unimplements block yet.
-    _baseScrollView.delegate = nil;
-    _baseScrollView.frame = self.bounds;
-    _baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, CGRectGetHeight(self.bounds));
-    _baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.bounds), 0);
+    self.baseScrollView.delegate = nil;
+    self.baseScrollView.frame = self.bounds;
+    self.baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, CGRectGetHeight(self.bounds));
+    self.baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.bounds), 0);
     for (int i = 0; i < 3; i++) {
-        UIImageView *imageView = (UIImageView *)_imageViewList[i];
-        imageView.frame = CGRectMake(CGRectGetWidth(_baseScrollView.bounds) * i,
+        UIImageView *imageView = (UIImageView *)self.imageViewList[i];
+        imageView.frame = CGRectMake(CGRectGetWidth(self.baseScrollView.bounds) * i,
                                      0,
-                                     CGRectGetWidth(_baseScrollView.bounds),
-                                     CGRectGetHeight(_baseScrollView.bounds));
+                                     CGRectGetWidth(self.baseScrollView.bounds),
+                                     CGRectGetHeight(self.baseScrollView.bounds));
     }
-    _baseScrollView.delegate = self;
-    _pageControl.bounds = CGRectMake(0, 0, CGRectGetWidth(self.bounds), 30);
-    _pageControl.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds) - CGRectGetMidY(_pageControl.bounds));
+    self.baseScrollView.delegate = self;
+    self.pageControl.bounds = CGRectMake(0, 0, CGRectGetWidth(self.bounds), 30);
+    self.pageControl.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds) - CGRectGetMidY(self.pageControl.bounds));
 }
 
 - (void)pr_initializeControls {
-    _baseScrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
-    _baseScrollView.translatesAutoresizingMaskIntoConstraints = NO;
-    _baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, CGRectGetHeight(self.bounds));
-    _baseScrollView.pagingEnabled = YES;
-    _baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.bounds), 0);
-    _baseScrollView.showsVerticalScrollIndicator = NO;
-    _baseScrollView.showsHorizontalScrollIndicator = NO;
-    _baseScrollView.delegate = self;
-    _baseScrollView.scrollsToTop = NO;
-    _baseScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    [self addSubview:_baseScrollView];
+    self.baseScrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+    self.baseScrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, CGRectGetHeight(self.bounds));
+    self.baseScrollView.pagingEnabled = YES;
+    self.baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.bounds), 0);
+    self.baseScrollView.showsVerticalScrollIndicator = NO;
+    self.baseScrollView.showsHorizontalScrollIndicator = NO;
+    self.baseScrollView.delegate = self;
+    self.baseScrollView.scrollsToTop = NO;
+    self.baseScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self addSubview:self.baseScrollView];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(pr_handleTaped:)];
-    [_baseScrollView addGestureRecognizer:tap];
+    [self.baseScrollView addGestureRecognizer:tap];
     
-    _pageControl = [UIPageControl new];
-    _pageControl.userInteractionEnabled = NO;
-    [self addSubview:_pageControl];
+    self.pageControl = [UIPageControl new];
+    self.pageControl.userInteractionEnabled = NO;
+    [self addSubview:self.pageControl];
     
-    _imageViewList = [NSMutableArray new];
+    self.imageViewList = [NSMutableArray new];
     for (int i = 0; i < 3; i++) {
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetWidth(_baseScrollView.bounds) * i,
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.baseScrollView.bounds) * i,
                                                                                0,
-                                                                               CGRectGetWidth(_baseScrollView.bounds),
-                                                                               CGRectGetHeight(_baseScrollView.bounds))];
+                                                                               CGRectGetWidth(self.baseScrollView.bounds),
+                                                                               CGRectGetHeight(self.baseScrollView.bounds))];
         imageView.contentMode = UIViewContentModeScaleAspectFill;
         imageView.layer.masksToBounds = YES;
         imageView.tag = i;
         
-        [_baseScrollView addSubview:imageView];
-        [_imageViewList addObject:imageView];
+        [self.baseScrollView addSubview:imageView];
+        [self.imageViewList addObject:imageView];
     }
 }
 
 - (void)pr_handleTaped:(UITapGestureRecognizer *)sender {
-    if (self.didSelectItemAtIndex) {
-        self.didSelectItemAtIndex(_currentIndex);
-    }
+    [self pr_handleDidSelectItem];
 }
 
 - (NSInteger)pr_realIndexWithIndex:(NSInteger)index {
-    NSParameterAssert(_numberOfPages);
+    NSUInteger numberOfPages = [self pr_numberOfPages];
+    NSParameterAssert(numberOfPages);
     
-    NSInteger indexAmount = self.numberOfPages();
     // 更新页码总数
-    _pageControl.numberOfPages = indexAmount;
+    _pageControl.numberOfPages = numberOfPages;
     // 更新是否允许用户交互
-    _baseScrollView.scrollEnabled = indexAmount > 1;
+    _baseScrollView.scrollEnabled = numberOfPages > 1;
     // 获取最大索引
-    NSInteger maximumIndex = indexAmount - 1;
+    NSInteger maximumIndex = numberOfPages - 1;
     maximumIndex = maximumIndex > 0 ? maximumIndex : 0;
     // 判断真实索引位置
     if (index > maximumIndex) {
@@ -199,14 +167,14 @@
 - (void)pr_updateUserInterfaceWithScrollViewContentOffset:(CGPoint)contentOffset {
     BOOL shouldUpdate = NO;
     
-    if (contentOffset.x >= CGRectGetWidth(_baseScrollView.bounds) * 2) {
+    if (contentOffset.x >= CGRectGetWidth(self.baseScrollView.bounds) * 2) {
         // 向右
         shouldUpdate = YES;
-        _currentIndex = [self pr_realIndexWithIndex:++_currentIndex];
+        self.currentIndex = [self pr_realIndexWithIndex:++self.currentIndex];
     } else if (contentOffset.x <= 0) {
         // 向左
         shouldUpdate = YES;
-        _currentIndex = [self pr_realIndexWithIndex:--_currentIndex];
+        self.currentIndex = [self pr_realIndexWithIndex:--self.currentIndex];
     }
     
     // 判断是否需要更新
@@ -214,24 +182,22 @@
         return;
     }
     
-    _pageControl.currentPage = _currentIndex;
+    self.pageControl.currentPage = self.currentIndex;
     
     [self pr_updateUserInterface];
 }
 
 - (void)pr_updateUserInterface {
     // 更新所有imageView显示的图片
-    NSParameterAssert(self.updateImageViewForIndex);
-    self.updateImageViewForIndex((UIImageView *)_imageViewList[0], [self pr_realIndexWithIndex:_currentIndex - 1]);
-    self.updateImageViewForIndex((UIImageView *)_imageViewList[1], [self pr_realIndexWithIndex:_currentIndex]);
-    self.updateImageViewForIndex((UIImageView *)_imageViewList[2], [self pr_realIndexWithIndex:_currentIndex + 1]);
-    
+    [self pr_presentImageViewForIndex];
+
     // 恢复可见区域
-    _baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(_baseScrollView.bounds), 0);
+    self.baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.baseScrollView.bounds), 0);
 }
 
 - (void)pr_handleSwitchImageView:(NSTimer *)sender {
-    if (self.numberOfPages() <= 1) {
+    NSInteger numberOfPages = [self pr_numberOfPages];
+    if (numberOfPages <= 1) {
         return;
     }
     
@@ -246,9 +212,8 @@
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (self.animationDelayDuration) {
-        [self.timer resumeAfterDuration:self.animationDelayDuration()];
-    }
+    NSTimeInterval delay = [self pr_animationDuration];
+    [self.timer resumeAfterDuration:delay];
 }
 
 // scrollview滚动
@@ -267,8 +232,8 @@
     _numberOfPages = numberOfPages;
     NSInteger count = numberOfPages();
     count = count > 0 ?: 0;
-    _pageControl.numberOfPages = count;
-    _baseScrollView.scrollEnabled = _pageControl.numberOfPages > 1;
+    self.pageControl.numberOfPages = count;
+    self.baseScrollView.scrollEnabled = self.pageControl.numberOfPages > 1;
 }
 
 - (void)setUpdateImageViewForIndex:(void (^)(UIImageView *, NSUInteger))configureImageForViewWithIndex {
@@ -291,11 +256,20 @@
     return [UIImage imageWithCGImage:(__bridge CGImageRef)((id)self.layer.contents)];
 }
 
+- (void)replay {
+    NSInteger numberOfPages = [self pr_numberOfPages];
+    self.currentIndex = numberOfPages + 1;
+    [self pr_updateUserInterfaceWithScrollViewContentOffset:CGPointZero];
+}
+
 #pragma mark - Accessor
 
 - (NSTimer *)timer {
+    __weak typeof(self) weak_self = self;
     if (!_timer) {
-        _timer = [NSTimer scheduledTimerWithTimeInterval:_animationDelayDuration()
+        __strong typeof(weak_self) strong_self = weak_self;
+        NSTimeInterval interval = [strong_self pr_animationDuration];
+        _timer = [NSTimer scheduledTimerWithTimeInterval:interval
                                                   target:self
                                                 selector:@selector(pr_handleSwitchImageView:)
                                                 userInfo:nil
@@ -303,6 +277,53 @@
         [_timer pause];
     }
     return _timer;
+}
+
+
+#pragma mark - invoke block or protocol methods
+
+- (NSTimeInterval)pr_animationDuration {
+    if (self.animationDelayDuration) {
+        return self.animationDelayDuration();
+    } else if (self.delegate && [self.delegate respondsToSelector:@selector(playTimeIntervalOfBannerView:)]) {
+        return [self.delegate playTimeIntervalOfBannerView:self];
+    }
+    
+    return 5.0f;
+}
+
+- (NSInteger)pr_numberOfPages {
+    if (self.numberOfPages) {
+        return self.numberOfPages();
+    } else if (self.delegate && [self.delegate respondsToSelector:@selector(numberOfPagesInBannerView:)]) {
+        return  [self.delegate numberOfPagesInBannerView:self];
+    }
+    
+    return 0;
+}
+
+- (void)pr_handleDidSelectItem {
+    if (self.didSelectItemAtIndex) {
+        self.didSelectItemAtIndex(self.currentIndex);
+    } else if (self.delegate && [self.delegate respondsToSelector:@selector(bannerView:didSelectItemAtIndex:)]) {
+        [self.delegate bannerView:self didSelectItemAtIndex:self.currentIndex];
+    }
+}
+
+- (void)pr_presentImageViewForIndex {
+    if (self.updateImageViewForIndex) {
+        self.updateImageViewForIndex((UIImageView *)self.imageViewList[0], [self pr_realIndexWithIndex:self.currentIndex - 1]);
+        self.updateImageViewForIndex((UIImageView *)self.imageViewList[1], [self pr_realIndexWithIndex:self.currentIndex]);
+        self.updateImageViewForIndex((UIImageView *)self.imageViewList[2], [self pr_realIndexWithIndex:self.currentIndex + 1]);
+        return;
+    } else if (self.delegate && [self.delegate respondsToSelector:@selector(bannerView:presentImageView:forIndex:)]) {
+        [self.delegate bannerView:self presentImageView:self.imageViewList[0] forIndex:[self pr_realIndexWithIndex:self.currentIndex - 1]];
+        [self.delegate bannerView:self presentImageView:self.imageViewList[1] forIndex:[self pr_realIndexWithIndex:self.currentIndex]];
+        [self.delegate bannerView:self presentImageView:self.imageViewList[2] forIndex:[self pr_realIndexWithIndex:self.currentIndex + 1]];
+        return;
+    }
+
+    NSAssert(NO, @"Must implement `updateImageViewForIndex` or `bannerView:presentImageView:forIndex:`");
 }
 
 

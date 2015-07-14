@@ -1,9 +1,9 @@
 //
-//  CHXBannerView.h
+//  CHXBannerViewProtocol.h
 //  CHXBannerView
 //
-//  Created by Moch Xiao on 2015-03-01.
-//  Copyright (c) 2014 Moch Xiao (https://github.com/atcuan).
+//  Created by Moch Xiao on 7/14/15.
+//  Copyright (c) 2015 Foobar. All rights reserved.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,22 +24,19 @@
 //  THE SOFTWARE.
 //
 
-#import <UIKit/UIKit.h>
-#import "CHXBannerViewProtocol.h"
+#import <Foundation/Foundation.h>
 
-// 注意，在 autolayout 模式下，需要设置 UIViewController 的 automaticallyAdjustsScrollViewInsets = NO;
-@interface CHXBannerView : UIView
+@class CHXBannerView;
 
-@property (nonatomic, strong, readonly) UIPageControl *pageControl;
+@protocol CHXBannerViewProtocol <NSObject>
 
-@property (nonatomic, copy) NSInteger (^numberOfPages)(void);
-@property (nonatomic, copy) void (^updateImageViewForIndex)(UIImageView *imageView, NSUInteger index);
-@property (nonatomic, copy) void (^didSelectItemAtIndex)(NSUInteger index);
-@property (nonatomic, copy) NSTimeInterval (^animationDelayDuration)(void);
-@property (nonatomic, strong) UIImage *backgroundImage;
+@required
+- (NSInteger)numberOfPagesInBannerView:(CHXBannerView *)bannerView;
+- (void)bannerView:(CHXBannerView *)bannerView presentImageView:(UIImageView *)imageView forIndex:(NSInteger)index;
 
-- (void)replay;
-
-@property (nonatomic, weak) id <CHXBannerViewProtocol> delegate;
+@optional
+- (NSTimeInterval)playTimeIntervalOfBannerView:(CHXBannerView *)bannerView;
+- (void)bannerView:(CHXBannerView *)bannerView didSelectItemAtIndex:(NSInteger)index;
 
 @end
+
