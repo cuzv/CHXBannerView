@@ -25,21 +25,25 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CHXBannerViewProtocol.h"
+#import "CHXBannerViewDataSource.h"
+#import "CHXBannerViewDelegate.h"
 
-// 注意，在 autolayout 模式下，需要设置 UIViewController 的 automaticallyAdjustsScrollViewInsets = NO;
+/**
+ *  注意，在 autolayout 模式下，需要设置 UIViewController 的 automaticallyAdjustsScrollViewInsets = NO;
+ */
 @interface CHXBannerView : UIView
 
 @property (nonatomic, strong, readonly) UIPageControl *pageControl;
-
-@property (nonatomic, copy) NSInteger (^numberOfPages)(void);
-@property (nonatomic, copy) void (^updateImageViewForIndex)(UIImageView *imageView, NSUInteger index);
-@property (nonatomic, copy) void (^didSelectItemAtIndex)(NSUInteger index);
-@property (nonatomic, copy) NSTimeInterval (^animationDelayDuration)(void);
 @property (nonatomic, strong) UIImage *backgroundImage;
 
-- (void)replay;
+/**
+ *   Only when you invoke this method begin play transtion
+ */
+- (void)reloadData;
 
-@property (nonatomic, weak) id <CHXBannerViewProtocol> delegate;
+#pragma mark -
+
+@property (nonatomic, weak) id <CHXBannerViewDataSource> dataSource;
+@property (nonatomic, weak) id <CHXBannerViewDelegate> delegate;
 
 @end

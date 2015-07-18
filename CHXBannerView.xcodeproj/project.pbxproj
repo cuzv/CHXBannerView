@@ -61,7 +61,8 @@
 		466823121A8F4D3900609F32 /* CHXBannerViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CHXBannerViewTests.m; sourceTree = "<group>"; };
 		4668231E1A8F4D7000609F32 /* CHXBannerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHXBannerView.h; sourceTree = "<group>"; };
 		4668231F1A8F4D7000609F32 /* CHXBannerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHXBannerView.m; sourceTree = "<group>"; };
-		46FA93721B554C2F006E7930 /* CHXBannerViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHXBannerViewProtocol.h; sourceTree = "<group>"; };
+		4681C3531B59EB9D00484C60 /* CHXBannerViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHXBannerViewDataSource.h; sourceTree = "<group>"; };
+		4681C3541B59EBA800484C60 /* CHXBannerViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHXBannerViewDelegate.h; sourceTree = "<group>"; };
 		46FA93731B554F68006E7930 /* NSTimer+CHXAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+CHXAddition.h"; sourceTree = "<group>"; };
 		46FA93741B554F68006E7930 /* NSTimer+CHXAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+CHXAddition.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -161,9 +162,10 @@
 			children = (
 				4668231E1A8F4D7000609F32 /* CHXBannerView.h */,
 				4668231F1A8F4D7000609F32 /* CHXBannerView.m */,
-				46FA93721B554C2F006E7930 /* CHXBannerViewProtocol.h */,
 				46FA93731B554F68006E7930 /* NSTimer+CHXAddition.h */,
 				46FA93741B554F68006E7930 /* NSTimer+CHXAddition.m */,
+				4681C3531B59EB9D00484C60 /* CHXBannerViewDataSource.h */,
+				4681C3541B59EBA800484C60 /* CHXBannerViewDelegate.h */,
 			);
 			path = Source;
 			sourceTree = "<group>";

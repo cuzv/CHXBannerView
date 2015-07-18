@@ -27,7 +27,7 @@
 #import "ViewController.h"
 #import "CHXBannerView.h"
 
-@interface ViewController () <CHXBannerViewProtocol>
+@interface ViewController () <CHXBannerViewDelegate, CHXBannerViewDataSource>
 @property (weak, nonatomic) IBOutlet CHXBannerView *bannerView;
 @property (strong, nonatomic) CHXBannerView *bannerView2;
 
@@ -65,73 +65,59 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-   
     self.automaticallyAdjustsScrollViewInsets = NO;
     
-    __weak typeof(self) weakSelf = self;
-    
-    _bannerView.backgroundColor = [UIColor redColor];
-    
-    _bannerView.numberOfPages = ^NSInteger (void) {
-        return 3;
-    };
-    _bannerView.updateImageViewForIndex = ^(UIImageView *imageView, NSUInteger index) {
-        imageView.image = [UIImage imageNamed:weakSelf.urls[index]];
-        UIColor *color = nil;
-        if (index == 0) {
-            color = [UIColor purpleColor];
-        } else if (index == 1) {
-            color = [UIColor yellowColor];
-        } else {
-            color = [UIColor blueColor];
-        }
-        imageView.backgroundColor = color;
-    };
-    _bannerView.didSelectItemAtIndex = ^(NSUInteger index) {
-        NSLog(@"didSelectItemAtIndex: %ld", index);
-    };
-    _bannerView.animationDelayDuration = ^NSTimeInterval (void) {
-        return 3;
-    };
-    
-    
-    _bannerView2 = [[CHXBannerView alloc] initWithFrame:CGRectMake(20, 220, 200, 100)];
-    _bannerView2.delegate = self;
-    _bannerView2.backgroundColor = [UIColor lightGrayColor];
-    [self.view addSubview:_bannerView2];
-    
-//    _bannerView2.numberOfPages = ^NSInteger (void) {
-//        return 2;
+//    __weak typeof(self) weakSelf = self;
+//    
+//    _bannerView.backgroundColor = [UIColor redColor];
+//    
+//    _bannerView.numberOfPages = ^NSInteger (void) {
+//        return 3;
 //    };
-//    _bannerView2.updateImageViewForIndex = ^(UIImageView *imageView, NSUInteger index) {
+//    _bannerView.updateImageViewForIndex = ^(UIImageView *imageView, NSUInteger index) {
 //        imageView.image = [UIImage imageNamed:weakSelf.urls[index]];
+//        UIColor *color = nil;
+//        if (index == 0) {
+//            color = [UIColor purpleColor];
+//        } else if (index == 1) {
+//            color = [UIColor yellowColor];
+//        } else {
+//            color = [UIColor blueColor];
+//        }
+//        imageView.backgroundColor = color;
 //    };
-//    _bannerView2.didSelectItemAtIndex = ^(NSUInteger index) {
+//    _bannerView.didSelectItemAtIndex = ^(NSUInteger index) {
 //        NSLog(@"didSelectItemAtIndex: %ld", index);
 //    };
-//    _bannerView2.animationDelayDuration = ^NSTimeInterval (void) {
-//        return 2;
+//    _bannerView.animationDelayDuration = ^NSTimeInterval (void) {
+//        return 3;
 //    };
     
+    
+    self.bannerView2 = [[CHXBannerView alloc] initWithFrame:CGRectMake(20, 220, 200, 100)];
+    self.bannerView2.dataSource = self;
+    self.bannerView2.backgroundColor = [UIColor lightGrayColor];
+    [self.view addSubview:self.bannerView2];
+    [self.bannerView2 reloadData];
 }
-
-#pragma mark - CHXBannerViewProtocol
 
 - (NSInteger)numberOfPagesInBannerView:(CHXBannerView *)bannerView {
-    return 5;
-}
-
-- (NSTimeInterval)playTimeIntervalOfBannerView:(CHXBannerView *)bannerView {
-    return 3;
+    return self.urls.count;
 }
 
 - (void)bannerView:(CHXBannerView *)bannerView presentImageView:(UIImageView *)imageView forIndex:(NSInteger)index {
     imageView.image = [UIImage imageNamed:self.urls[index]];
 }
 
+- (NSTimeInterval)timeIntervalOfTransitionsAnimationInBannerView:(CHXBannerView *)bannerView {
+    return 3;
+}
 
 
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.bannerView2 reloadData];
+}
 
 
 @end

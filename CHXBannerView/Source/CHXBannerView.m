@@ -33,8 +33,14 @@
 @property (nonatomic, strong) UIScrollView *baseScrollView;
 @property (nonatomic, strong) UIPageControl *pageControl;
 @property (nonatomic, assign) NSUInteger currentIndex;
-@property (nonatomic, strong) NSMutableArray *imageViewList;
+@property (nonatomic, strong) NSArray *imageViewList;
 @property (nonatomic, strong) NSTimer *timer;
+//@property (nonatomic, strong) CADisplayLink *timer;
+
+// DataSource
+@property (nonatomic, assign) NSInteger numberOfPages;
+@property (nonatomic, assign) NSTimeInterval timeIntervalOfTransitionsAnimation;
+
 @end
 
 @implementation CHXBannerView
@@ -45,20 +51,26 @@
 }
 #endif
 
-#pragma mark - Init
+#pragma mark - Override methods
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
-    if (self = [super initWithCoder:aDecoder]) {
-        [self pr_initializeControls];
+    self = [super initWithCoder:aDecoder];
+    if (!self) {
+        return nil;
     }
+    
+    [self pr_initializeControls];
     
     return self;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        [self pr_initializeControls];
+    self = [super initWithFrame:frame];
+    if (!self) {
+        return nil;
     }
+    
+    [self pr_initializeControls];
     
     return self;
 }
@@ -67,16 +79,14 @@
     [super layoutSubviews];
     
     [self.timer pause];
-    
     [self pr_updateControlsFrame];
-    
-    [self.timer resumeAfterDuration:[self pr_animationDuration]];
+    [self.timer resumeAfterDuration:self.timeIntervalOfTransitionsAnimation];
 }
 
 - (void)willMoveToWindow:(UIWindow *)newWindow {
     [self.timer invalidate];
     
-    NSTimeInterval delay = [self pr_animationDuration];
+    NSTimeInterval delay = self.timeIntervalOfTransitionsAnimation;
     if (newWindow && delay) {
         [self pr_updateControlsFrame];
         self.timer = nil;
@@ -85,6 +95,42 @@
 }
 
 #pragma mark - Private
+
+- (void)pr_initializeControls {
+    self.baseScrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+    self.baseScrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, CGRectGetHeight(self.bounds));
+    self.baseScrollView.pagingEnabled = YES;
+    self.baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.bounds), 0);
+    self.baseScrollView.showsVerticalScrollIndicator = NO;
+    self.baseScrollView.showsHorizontalScrollIndicator = NO;
+    self.baseScrollView.delegate = self;
+    self.baseScrollView.scrollsToTop = NO;
+    self.baseScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self addSubview:self.baseScrollView];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(pr_handleDidSelectItem)];
+    [self.baseScrollView addGestureRecognizer:tap];
+    
+    self.pageControl = [UIPageControl new];
+    self.pageControl.userInteractionEnabled = NO;
+    [self addSubview:self.pageControl];
+    
+    NSMutableArray *imageViewList = [NSMutableArray new];
+    for (int i = 0; i < 3; i++) {
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.baseScrollView.bounds) * i,
+                                                                               0,
+                                                                               CGRectGetWidth(self.baseScrollView.bounds),
+                                                                               CGRectGetHeight(self.baseScrollView.bounds))];
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.layer.masksToBounds = YES;
+        imageView.tag = i;
+        
+        [self.baseScrollView addSubview:imageView];
+        [imageViewList addObject:imageView];
+    }
+    self.imageViewList = imageViewList;
+}
 
 - (void)pr_updateControlsFrame {
     // set contentOffset will trigger delegate method, which will call some unimplements block yet.
@@ -104,52 +150,10 @@
     self.pageControl.center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds) - CGRectGetMidY(self.pageControl.bounds));
 }
 
-- (void)pr_initializeControls {
-    self.baseScrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
-    self.baseScrollView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, CGRectGetHeight(self.bounds));
-    self.baseScrollView.pagingEnabled = YES;
-    self.baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.bounds), 0);
-    self.baseScrollView.showsVerticalScrollIndicator = NO;
-    self.baseScrollView.showsHorizontalScrollIndicator = NO;
-    self.baseScrollView.delegate = self;
-    self.baseScrollView.scrollsToTop = NO;
-    self.baseScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    [self addSubview:self.baseScrollView];
-    
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(pr_handleTaped:)];
-    [self.baseScrollView addGestureRecognizer:tap];
-    
-    self.pageControl = [UIPageControl new];
-    self.pageControl.userInteractionEnabled = NO;
-    [self addSubview:self.pageControl];
-    
-    self.imageViewList = [NSMutableArray new];
-    for (int i = 0; i < 3; i++) {
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.baseScrollView.bounds) * i,
-                                                                               0,
-                                                                               CGRectGetWidth(self.baseScrollView.bounds),
-                                                                               CGRectGetHeight(self.baseScrollView.bounds))];
-        imageView.contentMode = UIViewContentModeScaleAspectFill;
-        imageView.layer.masksToBounds = YES;
-        imageView.tag = i;
-        
-        [self.baseScrollView addSubview:imageView];
-        [self.imageViewList addObject:imageView];
-    }
-}
-
-- (void)pr_handleTaped:(UITapGestureRecognizer *)sender {
-    [self pr_handleDidSelectItem];
-}
-
 - (NSInteger)pr_realIndexWithIndex:(NSInteger)index {
-    NSUInteger numberOfPages = [self pr_numberOfPages];
-    
-    // 更新页码总数
-    _pageControl.numberOfPages = numberOfPages;
+    NSInteger numberOfPages = self.numberOfPages;
     // 更新是否允许用户交互
-    _baseScrollView.scrollEnabled = numberOfPages > 1;
+    self.baseScrollView.scrollEnabled = numberOfPages > 1;
     // 获取最大索引
     NSInteger maximumIndex = numberOfPages - 1;
     maximumIndex = maximumIndex > 0 ? maximumIndex : 0;
@@ -181,22 +185,22 @@
         return;
     }
     
+    // 更新 page control 显示
     self.pageControl.currentPage = self.currentIndex;
     
-    [self pr_updateUserInterface];
-}
-
-- (void)pr_updateUserInterface {
     // 更新所有imageView显示的图片
     [self pr_presentImageViewForIndex];
-
+    
     // 恢复可见区域
     self.baseScrollView.contentOffset = CGPointMake(CGRectGetWidth(self.baseScrollView.bounds), 0);
 }
 
 - (void)pr_handleSwitchImageView:(NSTimer *)sender {
-    NSInteger numberOfPages = [self pr_numberOfPages];
-    if (numberOfPages <= 1) {
+    NSLog(@"~~~~~~~~~~~%s~~~~~~~~~~~", __FUNCTION__);
+
+    if (self.numberOfPages <= 1) {
+        [self.timer invalidate];
+        self.timer = nil;
         return;
     }
     
@@ -211,8 +215,7 @@
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    NSTimeInterval delay = [self pr_animationDuration];
-    [self.timer resumeAfterDuration:delay];
+    [self.timer resumeAfterDuration:self.timeIntervalOfTransitionsAnimation];
 }
 
 // scrollview滚动
@@ -227,26 +230,6 @@
 
 #pragma mark - Public
 
-- (void)setNumberOfPages:(NSInteger (^)(void))numberOfPages {
-    _numberOfPages = numberOfPages;
-    NSInteger count = numberOfPages();
-    count = count > 0 ?: 0;
-    self.pageControl.numberOfPages = count;
-    self.baseScrollView.scrollEnabled = self.pageControl.numberOfPages > 1;
-}
-
-- (void)setUpdateImageViewForIndex:(void (^)(UIImageView *, NSUInteger))configureImageForViewWithIndex {
-    _updateImageViewForIndex = configureImageForViewWithIndex;
-    [self pr_updateUserInterface];
-}
-
-- (void)setAnimationDelayDuration:(NSTimeInterval (^)(void))animationDelayDuration {
-    _animationDelayDuration = animationDelayDuration;
-    [self.timer invalidate];
-    self.timer = nil;
-    [self.timer resume];
-}
-
 - (void)setBackgroundImage:(UIImage *)backgroundImage {
     self.layer.contents = (id)backgroundImage.CGImage;
 }
@@ -255,10 +238,52 @@
     return [UIImage imageWithCGImage:(__bridge CGImageRef)((id)self.layer.contents)];
 }
 
-- (void)replay {
+- (void)reloadData {
     NSInteger numberOfPages = [self pr_numberOfPages];
+    self.numberOfPages = numberOfPages;
+    self.timeIntervalOfTransitionsAnimation = [self pr_animationIntervalDuration];
+    self.pageControl.numberOfPages = numberOfPages;
+    self.pageControl.hidden = numberOfPages <= 1;
+    self.baseScrollView.scrollEnabled = numberOfPages > 1;
+
     self.currentIndex = numberOfPages + 1;
     [self pr_updateUserInterfaceWithScrollViewContentOffset:CGPointZero];
+
+    [self.timer resumeAfterDuration:self.timeIntervalOfTransitionsAnimation];
+}
+
+#pragma mark - CHXBannerViewDataSource inner invoke
+
+- (NSTimeInterval)pr_animationIntervalDuration {
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(timeIntervalOfTransitionsAnimationInBannerView:)]) {
+        return [self.dataSource timeIntervalOfTransitionsAnimationInBannerView:self];
+    }
+    
+    return 5.0f;
+}
+
+- (NSInteger)pr_numberOfPages {
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(numberOfPagesInBannerView:)]) {
+        return [self.dataSource numberOfPagesInBannerView:self];
+    }
+    
+    return 0;
+}
+
+- (void)pr_presentImageViewForIndex {
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(bannerView:presentImageView:forIndex:)]) {
+        [self.dataSource bannerView:self presentImageView:self.imageViewList[0] forIndex:[self pr_realIndexWithIndex:self.currentIndex - 1]];
+        [self.dataSource bannerView:self presentImageView:self.imageViewList[1] forIndex:[self pr_realIndexWithIndex:self.currentIndex]];
+        [self.dataSource bannerView:self presentImageView:self.imageViewList[2] forIndex:[self pr_realIndexWithIndex:self.currentIndex + 1]];
+    }
+}
+
+#pragma mark - CHXBannerViewDelegate inner invoke
+
+- (void)pr_handleDidSelectItem {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(bannerView:didSelectItemAtIndex:)]) {
+        [self.delegate bannerView:self didSelectItemAtIndex:self.currentIndex];
+    }
 }
 
 #pragma mark - Accessor
@@ -267,63 +292,11 @@
     __weak typeof(self) weak_self = self;
     if (!_timer) {
         __strong typeof(weak_self) strong_self = weak_self;
-        NSTimeInterval interval = [strong_self pr_animationDuration];
-        _timer = [NSTimer scheduledTimerWithTimeInterval:interval
-                                                  target:self
-                                                selector:@selector(pr_handleSwitchImageView:)
-                                                userInfo:nil
-                                                 repeats:YES];
+        _timer = [NSTimer scheduledTimerWithTimeInterval:strong_self.timeIntervalOfTransitionsAnimation target:strong_self selector:@selector(pr_handleSwitchImageView:) userInfo:nil repeats:YES];
         [_timer pause];
     }
+    
     return _timer;
 }
-
-
-#pragma mark - invoke block or protocol methods
-
-- (NSTimeInterval)pr_animationDuration {
-    if (self.animationDelayDuration) {
-        return self.animationDelayDuration();
-    } else if (self.delegate && [self.delegate respondsToSelector:@selector(playTimeIntervalOfBannerView:)]) {
-        return [self.delegate playTimeIntervalOfBannerView:self];
-    }
-    
-    return 5.0f;
-}
-
-- (NSInteger)pr_numberOfPages {
-    if (self.numberOfPages) {
-        return self.numberOfPages();
-    } else if (self.delegate && [self.delegate respondsToSelector:@selector(numberOfPagesInBannerView:)]) {
-        return  [self.delegate numberOfPagesInBannerView:self];
-    }
-    
-    return 0;
-}
-
-- (void)pr_handleDidSelectItem {
-    if (self.didSelectItemAtIndex) {
-        self.didSelectItemAtIndex(self.currentIndex);
-    } else if (self.delegate && [self.delegate respondsToSelector:@selector(bannerView:didSelectItemAtIndex:)]) {
-        [self.delegate bannerView:self didSelectItemAtIndex:self.currentIndex];
-    }
-}
-
-- (void)pr_presentImageViewForIndex {
-    if (self.updateImageViewForIndex) {
-        self.updateImageViewForIndex((UIImageView *)self.imageViewList[0], [self pr_realIndexWithIndex:self.currentIndex - 1]);
-        self.updateImageViewForIndex((UIImageView *)self.imageViewList[1], [self pr_realIndexWithIndex:self.currentIndex]);
-        self.updateImageViewForIndex((UIImageView *)self.imageViewList[2], [self pr_realIndexWithIndex:self.currentIndex + 1]);
-        return;
-    } else if (self.delegate && [self.delegate respondsToSelector:@selector(bannerView:presentImageView:forIndex:)]) {
-        [self.delegate bannerView:self presentImageView:self.imageViewList[0] forIndex:[self pr_realIndexWithIndex:self.currentIndex - 1]];
-        [self.delegate bannerView:self presentImageView:self.imageViewList[1] forIndex:[self pr_realIndexWithIndex:self.currentIndex]];
-        [self.delegate bannerView:self presentImageView:self.imageViewList[2] forIndex:[self pr_realIndexWithIndex:self.currentIndex + 1]];
-        return;
-    }
-
-    NSAssert(NO, @"Must implement `updateImageViewForIndex` or `bannerView:presentImageView:forIndex:`");
-}
-
 
 @end
