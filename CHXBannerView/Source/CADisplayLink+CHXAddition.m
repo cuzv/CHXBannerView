@@ -1,5 +1,5 @@
 //
-//  CHXBannerViewDataSource.h
+//  CADisplayLink+CHXAddition.m
 //  CHXBannerView
 //
 //  Created by Moch Xiao on 7/18/15.
@@ -24,17 +24,22 @@
 //  THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
+#import "CADisplayLink+CHXAddition.h"
 
-@class CHXBannerView;
+@implementation CADisplayLink (CHXAddition)
 
-@protocol CHXBannerViewDataSource <NSObject>
+- (void)pause {
+    self.paused = YES;
+}
 
-@required
-- (NSInteger)numberOfPagesInBannerView:(CHXBannerView *)bannerView;
-- (void)bannerView:(CHXBannerView *)bannerView presentImageView:(UIImageView *)imageView forIndex:(NSInteger)index;
+- (void)resume {
+    self.paused = NO;
+}
 
-@optional
-- (NSTimeInterval)timeIntervalOfTransitionsAnimationInBannerView:(CHXBannerView *)bannerView;
+- (void)resumeAfterDuration:(NSTimeInterval)interval {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.paused = NO;
+    });
+}
 
 @end

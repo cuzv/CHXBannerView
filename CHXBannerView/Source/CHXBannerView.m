@@ -25,7 +25,7 @@
 //
 
 #import "CHXBannerView.h"
-#import "NSTimer+CHXAddition.h"
+#import "CADisplayLink+CHXAddition.h"
 
 #pragma mark - CHXBannerView
 
@@ -34,8 +34,7 @@
 @property (nonatomic, strong) UIPageControl *pageControl;
 @property (nonatomic, assign) NSUInteger currentIndex;
 @property (nonatomic, strong) NSArray *imageViewList;
-@property (nonatomic, strong) NSTimer *timer;
-//@property (nonatomic, strong) CADisplayLink *timer;
+@property (nonatomic, strong) CADisplayLink *timer;
 
 // DataSource
 @property (nonatomic, assign) NSInteger numberOfPages;
@@ -196,8 +195,6 @@
 }
 
 - (void)pr_handleSwitchImageView:(NSTimer *)sender {
-    NSLog(@"~~~~~~~~~~~%s~~~~~~~~~~~", __FUNCTION__);
-
     if (self.numberOfPages <= 1) {
         [self.timer invalidate];
         self.timer = nil;
@@ -288,11 +285,13 @@
 
 #pragma mark - Accessor
 
-- (NSTimer *)timer {
+- (CADisplayLink *)timer {
     __weak typeof(self) weak_self = self;
     if (!_timer) {
         __strong typeof(weak_self) strong_self = weak_self;
-        _timer = [NSTimer scheduledTimerWithTimeInterval:strong_self.timeIntervalOfTransitionsAnimation target:strong_self selector:@selector(pr_handleSwitchImageView:) userInfo:nil repeats:YES];
+        _timer = [CADisplayLink displayLinkWithTarget:strong_self selector:@selector(pr_handleSwitchImageView:)];
+        [_timer addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+        _timer.frameInterval = 60.0f * self.timeIntervalOfTransitionsAnimation;
         [_timer pause];
     }
     

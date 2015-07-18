@@ -63,45 +63,36 @@
 }
 
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.bannerView2 reloadData];
+}
+
+#pragma mark -
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.automaticallyAdjustsScrollViewInsets = NO;
-    
-//    __weak typeof(self) weakSelf = self;
-//    
-//    _bannerView.backgroundColor = [UIColor redColor];
-//    
-//    _bannerView.numberOfPages = ^NSInteger (void) {
-//        return 3;
-//    };
-//    _bannerView.updateImageViewForIndex = ^(UIImageView *imageView, NSUInteger index) {
-//        imageView.image = [UIImage imageNamed:weakSelf.urls[index]];
-//        UIColor *color = nil;
-//        if (index == 0) {
-//            color = [UIColor purpleColor];
-//        } else if (index == 1) {
-//            color = [UIColor yellowColor];
-//        } else {
-//            color = [UIColor blueColor];
-//        }
-//        imageView.backgroundColor = color;
-//    };
-//    _bannerView.didSelectItemAtIndex = ^(NSUInteger index) {
-//        NSLog(@"didSelectItemAtIndex: %ld", index);
-//    };
-//    _bannerView.animationDelayDuration = ^NSTimeInterval (void) {
-//        return 3;
-//    };
-    
+
+    self.bannerView.delegate = self;
+    self.bannerView.dataSource = self;
+    [self.bannerView reloadData];
     
     self.bannerView2 = [[CHXBannerView alloc] initWithFrame:CGRectMake(20, 220, 200, 100)];
     self.bannerView2.dataSource = self;
+    self.bannerView2.delegate = self;
+    self.bannerView2.pageControl.currentPageIndicatorTintColor = [UIColor redColor];
+    self.bannerView2.pageControl.pageIndicatorTintColor = [UIColor whiteColor];
     self.bannerView2.backgroundColor = [UIColor lightGrayColor];
     [self.view addSubview:self.bannerView2];
     [self.bannerView2 reloadData];
 }
 
+#pragma mark - CHXBannerViewDataSource
+
 - (NSInteger)numberOfPagesInBannerView:(CHXBannerView *)bannerView {
+    if (self.bannerView == bannerView) {
+        return 3;
+    }
     return self.urls.count;
 }
 
@@ -113,11 +104,12 @@
     return 3;
 }
 
+#pragma mark - CHXBannerViewDelegate
 
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self.bannerView2 reloadData];
+- (void)bannerView:(CHXBannerView *)bannerView didSelectItemAtIndex:(NSInteger)index {
+    NSLog(@"didSelectItemAtIndex: %@", @(index));
 }
+
 
 
 @end

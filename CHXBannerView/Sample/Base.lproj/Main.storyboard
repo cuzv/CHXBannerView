@@ -18,8 +18,8 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I0T-C7-a2Y" customClass="CHXBannerView">
-                                <rect key="frame" x="20" y="30" width="564" height="125"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <rect key="frame" x="20" y="74" width="564" height="125"/>
+                                <color key="backgroundColor" red="0.92156862750000001" green="0.92156862750000001" blue="0.92156862750000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="125" id="a8c-Jb-IYD"/>
                                     <constraint firstAttribute="height" constant="200" id="gn9-RT-JSd"/>
@@ -38,7 +38,13 @@
                             <constraint firstItem="I0T-C7-a2Y" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="10" id="qHK-Nn-PHb"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="tNf-NO-zLN"/>
+                    <navigationItem key="navigationItem" id="tNf-NO-zLN">
+                        <barButtonItem key="rightBarButtonItem" title="Next" id="37k-Sv-yAt">
+                            <connections>
+                                <segue destination="65w-UX-amV" kind="show" id="J0e-nk-Zz0"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="bannerView" destination="I0T-C7-a2Y" id="UR5-9m-Mgr"/>
                     </connections>
@@ -82,16 +88,36 @@
                             <outletCollection property="gestureRecognizers" destination="63N-lY-Kxz" appends="YES" id="OIf-kg-VEn"/>
                         </connections>
                     </view>
-                    <navigationItem key="navigationItem" id="54N-vV-CbE"/>
+                    <navigationItem key="navigationItem" id="54N-vV-CbE">
+                        <barButtonItem key="rightBarButtonItem" title="Next" id="VMt-S7-qNA">
+                            <connections>
+                                <segue destination="vXZ-lx-hvc" kind="show" id="uMS-xV-bII"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KVF-jF-HJJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer id="63N-lY-Kxz">
-                    <connections>
-                        <segue destination="vXZ-lx-hvc" kind="show" id="2SR-pG-og8"/>
-                    </connections>
-                </tapGestureRecognizer>
+                <tapGestureRecognizer id="63N-lY-Kxz"/>
             </objects>
-            <point key="canvasLocation" x="1006" y="809"/>
+            <point key="canvasLocation" x="1156" y="841"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="g6d-Di-8NA">
+            <objects>
+                <viewController id="65w-UX-amV" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="BQ1-Q9-w95"/>
+                        <viewControllerLayoutGuide type="bottom" id="gMh-lg-7Iv"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="XBt-kz-3IM">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0IB-4Y-DQ4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1948" y="228"/>
         </scene>
     </scenes>
 </document>
