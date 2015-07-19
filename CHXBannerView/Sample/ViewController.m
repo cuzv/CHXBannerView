@@ -65,6 +65,7 @@
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [self.bannerView2 reloadData];
+    [self.bannerView reloadData];
 }
 
 #pragma mark -
@@ -75,16 +76,14 @@
 
     self.bannerView.delegate = self;
     self.bannerView.dataSource = self;
-    [self.bannerView reloadData];
     
     self.bannerView2 = [[CHXBannerView alloc] initWithFrame:CGRectMake(20, 220, 200, 100)];
     self.bannerView2.dataSource = self;
     self.bannerView2.delegate = self;
     self.bannerView2.pageControl.currentPageIndicatorTintColor = [UIColor redColor];
     self.bannerView2.pageControl.pageIndicatorTintColor = [UIColor whiteColor];
-    self.bannerView2.backgroundColor = [UIColor lightGrayColor];
+    self.bannerView2.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.5];
     [self.view addSubview:self.bannerView2];
-    [self.bannerView2 reloadData];
 }
 
 #pragma mark - CHXBannerViewDataSource
@@ -101,7 +100,7 @@
 }
 
 - (NSTimeInterval)timeIntervalOfTransitionsAnimationInBannerView:(CHXBannerView *)bannerView {
-    return 3;
+    return 5;
 }
 
 #pragma mark - CHXBannerViewDelegate

@@ -29,6 +29,7 @@
 @interface CADisplayLink (CHXAddition)
 
 - (void)pause;
+- (void)pauseAfterDuration:(NSTimeInterval)interval;
 - (void)resume;
 - (void)resumeAfterDuration:(NSTimeInterval)interval;
 

@@ -32,6 +32,12 @@
     self.paused = YES;
 }
 
+- (void)pauseAfterDuration:(NSTimeInterval)interval {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.paused = YES;
+    });
+}
+
 - (void)resume {
     self.paused = NO;
 }

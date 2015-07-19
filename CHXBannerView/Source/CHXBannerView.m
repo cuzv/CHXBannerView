@@ -82,14 +82,26 @@
     [self.timer resumeAfterDuration:self.timeIntervalOfTransitionsAnimation];
 }
 
-- (void)willMoveToWindow:(UIWindow *)newWindow {
-    [self.timer invalidate];
+- (void)didMoveToWindow {
+    [super didMoveToWindow];
     
-    NSTimeInterval delay = self.timeIntervalOfTransitionsAnimation;
-    if (newWindow && delay) {
-        [self pr_updateControlsFrame];
+    // When push pages, will inovke three times (tested in iOS8.4)
+    // There nil, not nil, nil
+    // so cant not use resume after some time duration, because
+    // pause will override the resume action
+    // so follow line means interrupt the animation
+    // when go back the current page, go on the animation
+    // if last cost half time, then anohter half time after will
+    // run the animation
+    self.timer.paused = !self.window;
+}
+
+- (void)didMoveToSuperview {
+    [super didMoveToSuperview];
+    
+    if (!self.superview) {
+        [self.timer invalidate];
         self.timer = nil;
-        [self.timer resumeAfterDuration:delay];
     }
 }
 
