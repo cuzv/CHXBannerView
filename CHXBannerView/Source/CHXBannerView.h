@@ -28,17 +28,17 @@
 #import "CHXBannerViewDataSource.h"
 #import "CHXBannerViewDelegate.h"
 
-/**
- *  注意，在 autolayout 模式下，需要设置 UIViewController 的 automaticallyAdjustsScrollViewInsets = NO;
- */
+/// 注意，在 autolayout 模式下，需要设置 UIViewController 的 automaticallyAdjustsScrollViewInsets = NO;
 @interface CHXBannerView : UIView
 
+/// The page indicator control
 @property (nonatomic, strong, readonly) UIPageControl *pageControl;
+/// Set the global background image
 @property (nonatomic, strong) UIImage *backgroundImage;
+/// Auto play the transition animation, default value is YES
+@property (nonatomic, assign) BOOL autoPlay;
 
-/**
- *   Only when you invoke this method begin play transtion
- */
+/// Only when you invoke this method begin play transtion
 - (void)reloadData;
 
 #pragma mark -

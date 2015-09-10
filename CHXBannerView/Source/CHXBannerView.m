@@ -3,7 +3,7 @@
 //  CHXBannerView
 //
 //  Created by Moch Xiao on 2015-03-01.
-//  Copyright (c) 2014 Moch Xiao (https://github.com/cuzv).
+//  Copyright (c) 2014 Moch Xiao (https://github.com/atcuan).
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -108,6 +108,8 @@
 #pragma mark - Private
 
 - (void)pr_initializeControls {
+    self.autoPlay = YES;
+    
     self.baseScrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
     self.baseScrollView.translatesAutoresizingMaskIntoConstraints = NO;
     self.baseScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) * 3, CGRectGetHeight(self.bounds));
@@ -254,10 +256,10 @@
     self.pageControl.numberOfPages = numberOfPages;
     self.pageControl.hidden = numberOfPages <= 1;
     self.baseScrollView.scrollEnabled = numberOfPages > 1;
-
+    
     self.currentIndex = numberOfPages + 1;
     [self pr_updateUserInterfaceWithScrollViewContentOffset:CGPointZero];
-
+    
     [self.timer resumeAfterDuration:self.timeIntervalOfTransitionsAnimation];
 }
 
@@ -302,7 +304,9 @@
     if (!_timer) {
         __strong typeof(weak_self) strong_self = weak_self;
         _timer = [CADisplayLink displayLinkWithTarget:strong_self selector:@selector(pr_handleSwitchImageView:)];
-        [_timer addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+        if (self.autoPlay) {
+            [_timer addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+        }
         _timer.frameInterval = 60.0f * self.timeIntervalOfTransitionsAnimation;
         [_timer pause];
     }
