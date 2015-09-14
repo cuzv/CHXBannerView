@@ -305,7 +305,7 @@
         __strong typeof(weak_self) strong_self = weak_self;
         _timer = [CADisplayLink displayLinkWithTarget:strong_self selector:@selector(pr_handleSwitchImageView:)];
         if (self.autoPlay) {
-            [_timer addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+            [_timer addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
         }
         _timer.frameInterval = 60.0f * self.timeIntervalOfTransitionsAnimation;
         [_timer pause];
