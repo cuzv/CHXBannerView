@@ -26,7 +26,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-@interface CADisplayLink (CHXAddition)
+@interface CADisplayLink (CHXBannerViewAddition)
 
 - (void)pause;
 - (void)pauseAfterDuration:(NSTimeInterval)interval;

@@ -26,7 +26,7 @@
 
 #import "CADisplayLink+CHXBannerViewAddition.h"
 
-@implementation CADisplayLink (CHXAddition)
+@implementation CADisplayLink (CHXBannerViewAddition)
 
 - (void)pause {
     self.paused = YES;
