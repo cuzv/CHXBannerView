@@ -1,5 +1,5 @@
 //
-//  CADisplayLink+CHXAddition.h
+//  CADisplayLink+CHXBannerViewAddition.m
 //  CHXBannerView
 //
 //  Created by Moch Xiao on 7/18/15.
@@ -24,13 +24,28 @@
 //  THE SOFTWARE.
 //
 
-#import <QuartzCore/QuartzCore.h>
+#import "CADisplayLink+CHXBannerViewAddition.h"
 
-@interface CADisplayLink (CHXAddition)
+@implementation CADisplayLink (CHXAddition)
 
-- (void)pause;
-- (void)pauseAfterDuration:(NSTimeInterval)interval;
-- (void)resume;
-- (void)resumeAfterDuration:(NSTimeInterval)interval;
+- (void)pause {
+    self.paused = YES;
+}
+
+- (void)pauseAfterDuration:(NSTimeInterval)interval {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.paused = YES;
+    });
+}
+
+- (void)resume {
+    self.paused = NO;
+}
+
+- (void)resumeAfterDuration:(NSTimeInterval)interval {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.paused = NO;
+    });
+}
 
 @end

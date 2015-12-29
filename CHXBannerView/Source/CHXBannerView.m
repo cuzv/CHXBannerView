@@ -25,7 +25,7 @@
 //
 
 #import "CHXBannerView.h"
-#import "CADisplayLink+CHXAddition.h"
+#import "CADisplayLink+CHXBannerViewAddition.h"
 
 #pragma mark - CHXBannerView
 

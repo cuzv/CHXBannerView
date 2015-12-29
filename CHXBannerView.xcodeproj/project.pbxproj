@@ -23,7 +23,7 @@
 		466823071A8F4D3900609F32 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 466823051A8F4D3900609F32 /* LaunchScreen.xib */; };
 		466823131A8F4D3900609F32 /* CHXBannerViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 466823121A8F4D3900609F32 /* CHXBannerViewTests.m */; };
 		466823201A8F4D7000609F32 /* CHXBannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4668231F1A8F4D7000609F32 /* CHXBannerView.m */; };
-		46BF46301B5A1ACF00C4368E /* CADisplayLink+CHXAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 46BF462F1B5A1ACF00C4368E /* CADisplayLink+CHXAddition.m */; };
+		46BF46301B5A1ACF00C4368E /* CADisplayLink+CHXBannerViewAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 46BF462F1B5A1ACF00C4368E /* CADisplayLink+CHXBannerViewAddition.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,8 +63,8 @@
 		4668231F1A8F4D7000609F32 /* CHXBannerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHXBannerView.m; sourceTree = "<group>"; };
 		4681C3531B59EB9D00484C60 /* CHXBannerViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHXBannerViewDataSource.h; sourceTree = "<group>"; };
 		4681C3541B59EBA800484C60 /* CHXBannerViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHXBannerViewDelegate.h; sourceTree = "<group>"; };
-		46BF462E1B5A1ACF00C4368E /* CADisplayLink+CHXAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CADisplayLink+CHXAddition.h"; sourceTree = "<group>"; };
-		46BF462F1B5A1ACF00C4368E /* CADisplayLink+CHXAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CADisplayLink+CHXAddition.m"; sourceTree = "<group>"; };
+		46BF462E1B5A1ACF00C4368E /* CADisplayLink+CHXBannerViewAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CADisplayLink+CHXBannerViewAddition.h"; sourceTree = "<group>"; };
+		46BF462F1B5A1ACF00C4368E /* CADisplayLink+CHXBannerViewAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CADisplayLink+CHXBannerViewAddition.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,8 +164,8 @@
 				4668231F1A8F4D7000609F32 /* CHXBannerView.m */,
 				4681C3531B59EB9D00484C60 /* CHXBannerViewDataSource.h */,
 				4681C3541B59EBA800484C60 /* CHXBannerViewDelegate.h */,
-				46BF462E1B5A1ACF00C4368E /* CADisplayLink+CHXAddition.h */,
-				46BF462F1B5A1ACF00C4368E /* CADisplayLink+CHXAddition.m */,
+				46BF462E1B5A1ACF00C4368E /* CADisplayLink+CHXBannerViewAddition.h */,
+				46BF462F1B5A1ACF00C4368E /* CADisplayLink+CHXBannerViewAddition.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -227,7 +227,7 @@
 		466822EB1A8F4D3900609F32 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = Foobar;
 				TargetAttributes = {
 					466822F21A8F4D3900609F32 = {
@@ -295,7 +295,7 @@
 				466822FC1A8F4D3900609F32 /* AppDelegate.m in Sources */,
 				466823201A8F4D7000609F32 /* CHXBannerView.m in Sources */,
 				466822F91A8F4D3900609F32 /* main.m in Sources */,
-				46BF46301B5A1ACF00C4368E /* CADisplayLink+CHXAddition.m in Sources */,
+				46BF46301B5A1ACF00C4368E /* CADisplayLink+CHXBannerViewAddition.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,6 +359,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -421,6 +422,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "CHXBannerView/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.foobar.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -431,6 +433,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "CHXBannerView/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.foobar.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -449,6 +452,7 @@
 				);
 				INFOPLIST_FILE = "CHXBannerViewTests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.foobar.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CHXBannerView.app/CHXBannerView";
 			};
@@ -464,6 +468,7 @@
 				);
 				INFOPLIST_FILE = "CHXBannerViewTests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.foobar.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CHXBannerView.app/CHXBannerView";
 			};
