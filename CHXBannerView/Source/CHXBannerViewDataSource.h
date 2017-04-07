@@ -34,7 +34,4 @@
 - (NSInteger)numberOfPagesInBannerView:(CHXBannerView *)bannerView;
 - (void)bannerView:(CHXBannerView *)bannerView presentImageView:(UIImageView *)imageView forIndex:(NSInteger)index;
 
-@optional
-- (NSTimeInterval)timeIntervalOfTransitionsAnimationInBannerView:(CHXBannerView *)bannerView;
-
 @end

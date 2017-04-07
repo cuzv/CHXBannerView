@@ -25,7 +25,120 @@
 //
 
 #import "CHXBannerView.h"
-#import "CADisplayLink+CHXBannerViewAddition.h"
+
+#pragma mark - WeakTarget
+
+@interface _CHXWeakProxy : NSProxy
+
+@property (nonatomic, weak, readonly) id target;
+- (instancetype)initWithTarget:(id)target;
++ (instancetype)proxyWithTarget:(id)target;
+
+@end
+
+@implementation _CHXWeakProxy
+
+- (instancetype)initWithTarget:(id)target {
+    _target = target;
+    return self;
+}
+
++ (instancetype)proxyWithTarget:(id)target {
+    return [[_CHXWeakProxy alloc] initWithTarget:target];
+}
+
+- (id)forwardingTargetForSelector:(SEL)selector {
+    return _target;
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation {
+    void *null = NULL;
+    [invocation setReturnValue:&null];
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
+    return [NSObject instanceMethodSignatureForSelector:@selector(init)];
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector {
+    return [_target respondsToSelector:aSelector];
+}
+
+- (BOOL)isEqual:(id)object {
+    return [_target isEqual:object];
+}
+
+- (NSUInteger)hash {
+    return [_target hash];
+}
+
+- (Class)superclass {
+    return [_target superclass];
+}
+
+- (Class)class {
+    return [_target class];
+}
+
+- (BOOL)isKindOfClass:(Class)aClass {
+    return [_target isKindOfClass:aClass];
+}
+
+- (BOOL)isMemberOfClass:(Class)aClass {
+    return [_target isMemberOfClass:aClass];
+}
+
+- (BOOL)conformsToProtocol:(Protocol *)aProtocol {
+    return [_target conformsToProtocol:aProtocol];
+}
+
+- (BOOL)isProxy {
+    return YES;
+}
+
+- (NSString *)description {
+    return [_target description];
+}
+
+- (NSString *)debugDescription {
+    return [_target debugDescription];
+}
+
+@end
+
+#pragma mark - NSTimer
+
+@interface NSTimer (_CHXAddition)
+
+- (void)pause;
+- (void)pauseAfterDuration:(NSTimeInterval)interval;
+- (void)resume;
+- (void)resumeAfterDuration:(NSTimeInterval)interval;
+
+@end
+
+@implementation NSTimer (_CHXAddition)
+
+- (void)pause {
+    self.fireDate = [NSDate distantFuture];
+}
+
+- (void)pauseAfterDuration:(NSTimeInterval)interval {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self pause];
+    });
+}
+
+- (void)resume {
+    self.fireDate = [NSDate date];
+}
+
+- (void)resumeAfterDuration:(NSTimeInterval)interval {
+    self.fireDate = [NSDate dateWithTimeIntervalSinceNow:interval];
+}
+
+@end
+
 
 #pragma mark - CHXBannerView
 
@@ -34,7 +147,7 @@
 @property (nonatomic, strong) UIPageControl *pageControl;
 @property (nonatomic, assign) NSUInteger currentIndex;
 @property (nonatomic, strong) NSArray *imageViewList;
-@property (nonatomic, strong) CADisplayLink *timer;
+@property (nonatomic, strong) NSTimer *timer;
 
 // DataSource
 @property (nonatomic, assign) NSInteger numberOfPages;
@@ -93,7 +206,11 @@
     // when go back the current page, go on the animation
     // if last cost half time, then anohter half time after will
     // run the animation
-    self.timer.paused = !self.window;
+    if (self.window) {
+        [self.timer resume];
+    } else {
+        [self.timer pause];
+    }
 }
 
 - (void)didMoveToSuperview {
@@ -108,7 +225,7 @@
 #pragma mark - Private
 
 - (void)pr_initializeControls {
-    self.autoPlay = YES;
+    self.transitionDuration = 5;
     
     self.baseScrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
     self.baseScrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -210,8 +327,7 @@
 
 - (void)pr_handleSwitchImageView:(NSTimer *)sender {
     if (self.numberOfPages <= 1) {
-        [self.timer invalidate];
-        self.timer = nil;
+        [sender pause];
         return;
     }
     
@@ -226,7 +342,7 @@
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    [self.timer resumeAfterDuration:self.timeIntervalOfTransitionsAnimation];
+    [self.timer resumeAfterDuration:self.transitionDuration];
 }
 
 // scrollview滚动
@@ -252,7 +368,6 @@
 - (void)reloadData {
     NSInteger numberOfPages = [self pr_numberOfPages];
     self.numberOfPages = numberOfPages;
-    self.timeIntervalOfTransitionsAnimation = [self pr_animationIntervalDuration];
     self.pageControl.numberOfPages = numberOfPages;
     self.pageControl.hidden = numberOfPages <= 1;
     self.baseScrollView.scrollEnabled = numberOfPages > 1;
@@ -260,18 +375,10 @@
     self.currentIndex = numberOfPages + 1;
     [self pr_updateUserInterfaceWithScrollViewContentOffset:CGPointZero];
     
-    [self.timer resumeAfterDuration:self.timeIntervalOfTransitionsAnimation];
+    [self.timer resumeAfterDuration:self.transitionDuration];
 }
 
 #pragma mark - CHXBannerViewDataSource inner invoke
-
-- (NSTimeInterval)pr_animationIntervalDuration {
-    if (self.dataSource && [self.dataSource respondsToSelector:@selector(timeIntervalOfTransitionsAnimationInBannerView:)]) {
-        return [self.dataSource timeIntervalOfTransitionsAnimationInBannerView:self];
-    }
-    
-    return 5.0f;
-}
 
 - (NSInteger)pr_numberOfPages {
     if (self.dataSource && [self.dataSource respondsToSelector:@selector(numberOfPagesInBannerView:)]) {
@@ -299,19 +406,18 @@
 
 #pragma mark - Accessor
 
-- (CADisplayLink *)timer {
-    __weak typeof(self) weak_self = self;
-    if (!_timer) {
-        __strong typeof(weak_self) strong_self = weak_self;
-        _timer = [CADisplayLink displayLinkWithTarget:strong_self selector:@selector(pr_handleSwitchImageView:)];
-        if (self.autoPlay) {
-            [_timer addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+- (void)setTransitionDuration:(NSTimeInterval)transitionDuration {
+    if (_transitionDuration != transitionDuration) {
+        _transitionDuration = transitionDuration;
+        [self.timer invalidate];
+        self.timer = nil;
+        if (transitionDuration > 0) {
+            _CHXWeakProxy *target = [_CHXWeakProxy proxyWithTarget:self];
+            self.timer = [NSTimer timerWithTimeInterval:transitionDuration target:target selector:@selector(pr_handleSwitchImageView:) userInfo:nil repeats:YES];
+            [NSRunLoop.currentRunLoop addTimer:self.timer forMode:NSRunLoopCommonModes];
+            self.timer.fireDate = [NSDate distantFuture];
         }
-        _timer.frameInterval = 60.0f * self.timeIntervalOfTransitionsAnimation;
-        [_timer pause];
     }
-    
-    return _timer;
 }
 
 @end

@@ -35,15 +35,13 @@
 @property (nonatomic, strong, readonly) UIPageControl *pageControl;
 /// Set the global background image
 @property (nonatomic, strong) UIImage *backgroundImage;
-/// Auto play the transition animation, default value is YES
-@property (nonatomic, assign) BOOL autoPlay;
-
-/// Only when you invoke this method begin play transtion
+/// Default value is 5, when > 0, will transition
+@property (nonatomic, assign) NSTimeInterval transitionDuration;
 - (void)reloadData;
 
 #pragma mark -
 
-@property (nonatomic, weak) id <CHXBannerViewDataSource> dataSource;
-@property (nonatomic, weak) id <CHXBannerViewDelegate> delegate;
+@property (nonatomic, weak) id<CHXBannerViewDataSource> dataSource;
+@property (nonatomic, weak) id<CHXBannerViewDelegate> delegate;
 
 @end
